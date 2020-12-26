@@ -24,37 +24,41 @@ int main()
      * barcode2 guardará el codigo de barras del segundo archivo
      * quantity guardará la cantidad de cada reciclaje
      * created guardara la fecha que se hizo el reciclaje
+     * 
      */ 
     string linea,linea2,barcode,name,volume,barcode2,quantity,created;
     /**
+     * 
      * vectorbarcode es un vector donde se guardarán los codigos de barra del primer archivo
      * vectorname es un vector donde se guardarán los nombres de los productos
      * vectorvolume es un vector donde se guardarán los volumenes de los productos
      * vectorbarcode2 es un vector donde se guardarán los codigos de barra del segundo archivo
      * vectorquantity es un vector donde se guardarán las cantidades del reciclaje
      * vectorcreated es un vector donde se guardaran las fechas de reciclaje
+     * 
      */
-    vector<string> vectorbarcode,vectorname,vectorvolume,vectorbarcode2,vectorquantity,vectorcreated;
+    vector<string> vectorbarcode,vectorname,vectorvolume,vectorbarcode2,vectorquantity,vectorcreated,vectorcodigo;
     /**
      * 
      * vectorquantityint Vector donde alojaremos las cantidades en formato doble
      * vectorcount es un vector que guardara las cantidades totales de reciclaje
      * 
      */
-    vector<int> vectorquantityint, vectorcount;
+    vector<int> vectorquantityint, vectorcount, vectorsuma;
     /**
      * 
      * contador es donde se guardara la suma de los valores en el vectorquantity
+     * auxiliar es donde guarda el valor del vector de manera auxiliar para la sumatoria
      * 
      */
-    int contador;
+    int contador, auxiliar;
      
     // **
     // A R C H I V O E Q U I P O S
 
     ifstream archivo, archivo2;
-    archivo.open("products_taller.csv");
-    archivo2.open("trx_taller.csv");
+    archivo.open("trx_taller.csv");
+    archivo2.open("products_taller.csv");
 
 #pragma omp parallel
     {
@@ -68,23 +72,26 @@ int main()
 
     while(archivo.good())
         {
-        getline(archivo, barcode, ';');
-        vectorbarcode.push_back(barcode);
-
-        getline(archivo, name, ';');
-        vectorname.push_back(name);
-
-        getline(archivo, volume, '\n');
-        vectorvolume.push_back(volume);
-
-        getline(archivo2, barcode2, ';');
+        getline(archivo, barcode2, ';');
         vectorbarcode2.push_back(barcode2);
 
-        getline(archivo2, quantity, ';');
+        getline(archivo, quantity, ';');
         vectorquantity.push_back(quantity);
 
-        getline(archivo2, created, '\n');
+        getline(archivo, created, '\n');
         vectorcreated.push_back(created);
+        }
+
+        while(archivo2.good())
+        {
+        getline(archivo2, barcode, ';');
+        vectorbarcode.push_back(barcode);
+
+        getline(archivo2, name, ';');
+        vectorname.push_back(name);
+
+        getline(archivo2, volume, '\n');
+        vectorvolume.push_back(volume);
         }
 
     for (int a = 0; a < vectorquantity.size(); a++){
@@ -95,7 +102,7 @@ int main()
     
     // C R E A A R C H I V O R E S U M E N
 
-    ofstream archivoFixture("resumen2.csv");
+    ofstream archivoFixture("resumen.csv");
 
     archivoFixture << "Barcode;";
     archivoFixture << "Name;";
@@ -104,25 +111,21 @@ int main()
 
 #pragma omp critical
 
-    for (int l=0; l<vectorbarcode2.size(); l++){
+    for (int l=0; l<vectorbarcode.size(); l++){
         for (int h=0; h<vectorbarcode2.size(); h++){
-            if (vectorbarcode2[l] == vectorbarcode2[h]){
-                contador = 0;
-                contador = contador + vectorquantityint[h];
+            if (vectorbarcode[l] == vectorbarcode2[h]){
+                auxiliar = auxiliar + vectorquantityint[h];
             }
         }
-        vectorcount.push_back(contador);
+        vectorcount.push_back(auxiliar);
+        auxiliar = 0;
     }
 
     for(int i=0;i<vectorbarcode.size();i++){
-        for (int b=0; b<vectorbarcode2.size();b++){
-            if (vectorbarcode[i] == vectorbarcode2[b]){
-                archivoFixture << vectorbarcode[i];
-                archivoFixture << ";"+vectorname[i];
-                archivoFixture << ";"+vectorvolume[i] + ";";
-                archivoFixture << vectorcount[b] << endl;
-            }
-        }
+        archivoFixture << vectorbarcode[i];
+        archivoFixture << ";"+vectorname[i];
+        archivoFixture << ";"+vectorvolume[i] + ";";
+        archivoFixture << vectorcount[i] << endl;
     }
 
             }
@@ -135,6 +138,4 @@ int main()
 void participantes() {
     std::cout << std::endl << "=== Tarea ===" << std::endl;
     std::cout << std::endl << "Shu-yi Wong" << std::endl; 
-    std::cout << std::endl << "Javier Lopez" << std::endl; 
-    std::cout << std::endl << "Alex Bidart" << std::endl; 
 }
