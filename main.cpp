@@ -41,14 +41,16 @@ int main()
      * vectorcount es un vector que guardara las cantidades totales de reciclaje
      * 
      */
-    vector<double> vectorquantityint, vectorcount;
+    vector<int> vectorquantityint, vectorcount;
 
+    int contador;
+     
     // **
     // A R C H I V O E Q U I P O S
 
     ifstream archivo, archivo2;
     archivo.open("products_taller.csv");
-    archivo2.open("trx_taller");
+    archivo2.open("trx_taller.csv");
 
 #pragma omp parallel
     {
@@ -81,13 +83,12 @@ int main()
         vectorcreated.push_back(created);
         }
 
-    for (int a = 0; a < 331310; a++){
+    for (int a = 0; a < vectorquantity.size(); a++){
         string Cant = vectorquantity[a].substr(1,vectorquantity[a].length());
-        double Cantidad = atof(Cant.c_str());
+        int Cantidad = atoi(Cant.c_str());
         vectorquantityint.push_back(Cantidad);
     }
-
-    // **
+    
     // C R E A A R C H I V O R E S U M E N
 
     ofstream archivoFixture("resumen.csv");
@@ -99,21 +100,19 @@ int main()
 
 #pragma omp critical
 
-    for (int l=0; l<331310; l++){
-        for (int h=0; h<331310; h++){
-            string valor = vectorbarcode2[l];
-            //if (std::find(vectorcount.begin(), vectorcount.end(), "valor") == vectorcount.end()){
-                if (vectorbarcode2[l]==vectorbarcode2[h]){
-                    double contador = vectorquantityint[l];
-                    contador = contador + vectorquantityint[h];
-                    vectorcount.push_back(contador);
-                }
-            //}
+    for (int l=0; l<vectorbarcode2.size(); l++){
+        for (int h=0; h<vectorbarcode2.size(); h++){
+            if (vectorbarcode2[l] == vectorbarcode2[h]){
+                contador = vectorquantityint[l];
+                contador = contador + vectorquantityint[h];
+                cout << vectorbarcode2[h];
+            }
         }
+    vectorcount.push_back(contador);
     }
 
-    for(int i=0;i<1892;i++){
-        if (vectorbarcode[i]==vectorbarcode2[i]){
+    for(int i=0;i<vectorbarcode.size();i++){
+        if (vectorbarcode[i] == vectorbarcode2[i]){
             archivoFixture << vectorbarcode[i];
             archivoFixture << ";"+vectorname[i];
             archivoFixture << ";"+vectorvolume[i] + ";";
@@ -121,14 +120,12 @@ int main()
         }
     }
 
-
             }
         }
     }
 
     return 0;
 }
-
 
 void participantes() {
     std::cout << std::endl << "=== Tarea ===" << std::endl;
