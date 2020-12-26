@@ -42,7 +42,11 @@ int main()
      * 
      */
     vector<int> vectorquantityint, vectorcount;
-
+    /**
+     * 
+     * contador es donde se guardara la suma de los valores en el vectorquantity
+     * 
+     */
     int contador;
      
     // **
@@ -91,7 +95,7 @@ int main()
     
     // C R E A A R C H I V O R E S U M E N
 
-    ofstream archivoFixture("resumen.csv");
+    ofstream archivoFixture("resumen2.csv");
 
     archivoFixture << "Barcode;";
     archivoFixture << "Name;";
@@ -103,20 +107,22 @@ int main()
     for (int l=0; l<vectorbarcode2.size(); l++){
         for (int h=0; h<vectorbarcode2.size(); h++){
             if (vectorbarcode2[l] == vectorbarcode2[h]){
-                contador = vectorquantityint[l];
+                contador = 0;
                 contador = contador + vectorquantityint[h];
-                cout << vectorbarcode2[h];
             }
         }
-    vectorcount.push_back(contador);
+        vectorcount.push_back(contador);
+        archivoFixture << vectorcount[l] << endl;
     }
 
     for(int i=0;i<vectorbarcode.size();i++){
-        if (vectorbarcode[i] == vectorbarcode2[i]){
-            archivoFixture << vectorbarcode[i];
-            archivoFixture << ";"+vectorname[i];
-            archivoFixture << ";"+vectorvolume[i] + ";";
-            archivoFixture << vectorcount[i] << endl;
+        for (int b=0; b<vectorbarcode2.size();b++){
+            if (vectorbarcode[i] == vectorbarcode2[b]){
+                archivoFixture << vectorbarcode[i];
+                archivoFixture << ";"+vectorname[i];
+                archivoFixture << ";"+vectorvolume[i] + ";";
+                archivoFixture << vectorcount[b] << endl;
+            }
         }
     }
 
