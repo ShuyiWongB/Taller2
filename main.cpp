@@ -37,21 +37,20 @@ int main()
      * vectorcreated es un vector donde se guardaran las fechas de reciclaje
      * 
      */
-    vector<string> vectorbarcode,vectorname,vectorvolume,vectorbarcode2,vectorquantity,vectorcreated,vectorcodigo;
+    vector<string> vectorbarcode,vectorname,vectorvolume,vectorbarcode2,vectorquantity,vectorcreated;
     /**
      * 
      * vectorquantityint Vector donde alojaremos las cantidades en formato doble
      * vectorcount es un vector que guardara las cantidades totales de reciclaje
      * 
      */
-    vector<int> vectorquantityint, vectorcount, vectorsuma;
+    vector<int> vectorquantityint, vectorcount;
     /**
      * 
-     * contador es donde se guardara la suma de los valores en el vectorquantity
      * auxiliar es donde guarda el valor del vector de manera auxiliar para la sumatoria
      * 
      */
-    int contador, auxiliar;
+    int auxiliar;
      
     // **
     // A R C H I V O E Q U I P O S
@@ -69,7 +68,7 @@ int main()
     
 #pragma omp task
             {
-
+//GUARDA TODOS LOS DATOS EN DIFERENTES VECTORES
     while(archivo.good())
         {
         getline(archivo, barcode2, ';');
@@ -93,7 +92,7 @@ int main()
         getline(archivo2, volume, '\n');
         vectorvolume.push_back(volume);
         }
-
+//TRANSFORMA LOS VALORES STRING DE QUANTITY A INT PARA SUMAR
     for (int a = 0; a < vectorquantity.size(); a++){
         string Cant = vectorquantity[a].substr(1,vectorquantity[a].length());
         int Cantidad = atoi(Cant.c_str());
@@ -110,7 +109,7 @@ int main()
     archivoFixture << "Count\n";
 
 #pragma omp critical
-
+//SUMA LAS CANTIDADES Y LAS GUARDA EN UN NUEVO VECTOR INDEXADO A BARCODE
     for (int l=0; l<vectorbarcode.size(); l++){
         for (int h=0; h<vectorbarcode2.size(); h++){
             if (vectorbarcode[l] == vectorbarcode2[h]){
@@ -120,7 +119,7 @@ int main()
         vectorcount.push_back(auxiliar);
         auxiliar = 0;
     }
-
+//GUARDA LOS DATOS EN UN NUEVO EXCEL
     for(int i=0;i<vectorbarcode.size();i++){
         archivoFixture << vectorbarcode[i];
         archivoFixture << ";"+vectorname[i];
