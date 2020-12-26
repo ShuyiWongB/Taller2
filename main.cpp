@@ -112,7 +112,6 @@ int main()
             }
         }
         vectorcount.push_back(contador);
-        archivoFixture << vectorcount[l] << endl;
     }
 
     for(int i=0;i<vectorbarcode.size();i++){
